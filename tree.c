@@ -139,7 +139,14 @@ int tree_from_index(ObjectID *id_out) {
     tree.count = index->count;
     tree.entries = malloc(sizeof(TreeEntry) * tree.count);
 
-    if (!tree.entries) return -1;
+    for (size_t i = 0; i < index->count; i++) {
+    IndexEntry *ie = &index->entries[i];
+    TreeEntry *te = &tree.entries[i];
+
+    te->mode = ie->mode;     // file permissions
+    te->type = OBJ_BLOB;     // files are blobs
+    te->id = ie->id;         // hash of file
+}
 
     return 0;
 }
