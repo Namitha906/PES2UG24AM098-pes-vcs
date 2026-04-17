@@ -160,6 +160,16 @@ if (tree_serialize(&tree, &buffer, &size) != 0) {
     free(tree.entries);
     return -1;
 }
+  
+    if (object_write(OBJ_TREE, buffer, size, out_tree) != 0) {
+    free(tree.entries);
+    free(buffer);
+    return -1;
+}
+
+free(tree.entries);
+free(buffer);
+return 0;
 
     return 0;
 }
