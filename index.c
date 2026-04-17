@@ -196,3 +196,22 @@ int index_load(Index *index) {
     fclose(fp);
     return 0;
 }
+
+
+int index_save(const Index *index) {
+    FILE *fp = fopen(".pes/index", "w");
+    if (!fp) return -1;
+
+    for (size_t i = 0; i < index->count; i++) {
+        const IndexEntry *e = &index->entries[i];
+
+        char hash_hex[HASH_HEX_SIZE + 1];
+        hash_to_hex(&e->id, hash_hex);
+
+        fprintf(fp, "%o %s %ld %ld %s\n",
+                e->mode, hash_hex, e->mtime, e->size, e->path);
+    }
+
+    fclose(fp);
+    return 0;
+}
