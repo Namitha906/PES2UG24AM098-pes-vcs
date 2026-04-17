@@ -146,6 +146,11 @@ int tree_from_index(ObjectID *id_out) {
     te->mode = ie->mode;     // file permissions
     te->type = OBJ_BLOB;     // files are blobs
     te->id = ie->id;         // hash of file
+     // Extract filename from path
+    const char *name = strrchr(ie->path, '/');
+    if (name) name++; else name = ie->path;
+
+    strncpy(te->name, name, sizeof(te->name));
 }
 
     return 0;
