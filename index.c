@@ -178,7 +178,20 @@ int index_load(Index *index) {
     index->count = 0;
 
     FILE *fp = fopen(".pes/index", "r");
-    if (!fp) return 0; // no file = empty index
+    if (!fp) return 0;
+
+    while (!feof(fp)) {
+        IndexEntry *e = &index->entries[index->count];
+
+        char hash_hex[HASH_HEX_SIZE + 1];
+
+        if (fscanf(fp, "%o %s %ld %ld %[^\n]\n",
+                   &e->mode, hash_hex, &e->mtime, &e->size, e->path) == 5) {
+
+            hex_to_hash(hash_hex, &e->id);
+            index->count++;
+        }
+    }
 
     fclose(fp);
     return 0;
