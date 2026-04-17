@@ -201,3 +201,19 @@ if (tree_from_index(&tree_id) != 0) {
 
 ObjectID parent_id;
 int has_parent = (head_read(&parent_id) == 0);
+
+
+Commit commit;
+
+commit.tree = tree_id;
+
+if (has_parent) {
+    commit.parent = parent_id;
+    commit.has_parent = 1;
+} else {
+    commit.has_parent = 0;
+}
+
+commit.author = pes_author();
+commit.message = message;
+commit.timestamp = time(NULL);
