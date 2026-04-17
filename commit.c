@@ -217,3 +217,19 @@ if (has_parent) {
 commit.author = pes_author();
 commit.message = message;
 commit.timestamp = time(NULL);
+
+void *data;
+size_t len;
+
+if (commit_serialize(&commit, &data, &len) != 0) {
+    return -1;
+}
+
+ObjectID commit_id;
+
+if (object_write(OBJ_COMMIT, data, len, &commit_id) != 0) {
+    free(data);
+    return -1;
+}
+
+free(data);
