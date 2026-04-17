@@ -151,6 +151,14 @@ int tree_from_index(ObjectID *id_out) {
     if (name) name++; else name = ie->path;
 
     strncpy(te->name, name, sizeof(te->name));
+    
+}
+   void *buffer;
+size_t size;
+
+if (tree_serialize(&tree, &buffer, &size) != 0) {
+    free(tree.entries);
+    return -1;
 }
 
     return 0;
