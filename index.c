@@ -173,3 +173,13 @@ int index_add(Index *index, const char *path) {
     (void)index; (void)path;
     return -1;
 }
+
+int index_load(Index *index) {
+    index->count = 0;
+
+    FILE *fp = fopen(".pes/index", "r");
+    if (!fp) return 0; // no file = empty index
+
+    fclose(fp);
+    return 0;
+}
