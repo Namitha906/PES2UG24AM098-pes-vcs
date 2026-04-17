@@ -193,48 +193,43 @@ int head_update(const ObjectID *new_commit) {
 //   - head_update       : moves the branch pointer to your new commit
 //
 // Returns 0 on success, -1 on error.
+int commit_create(const char *message, ObjectID *commit_id_out){
 ObjectID tree_id;
-
-if (tree_from_index(&tree_id) != 0) {
-    return -1;
-}
+if (tree_from_index(&tree_id) != 0) return -1;
 
 ObjectID parent_id;
 int has_parent = (head_read(&parent_id) == 0);
 
-
 Commit commit;
+memset(&commit, 0, sizeof(Commit));
 
 commit.tree = tree_id;
 
 if (has_parent) {
     commit.parent = parent_id;
     commit.has_parent = 1;
-} else {
-    commit.has_parent = 0;
 }
 
-commit.author = pes_author();
-commit.message = message;
+strncpy(commit.author, pes_author(), sizeof(commit.author) - 1);
+strncpy(commit.message, message, sizeof(commit.message) - 1);
+
 commit.timestamp = time(NULL);
 
 void *data;
 size_t len;
 
-if (commit_serialize(&commit, &data, &len) != 0) {
+if (commit_serialize(&commit, &data, &len) != 0)
     return -1;
-}
 
-ObjectID commit_id;
-
-if (object_write(OBJ_COMMIT, data, len, &commit_id) != 0) {
+if (object_write(OBJ_COMMIT, data, len, commit_id_out) != 0) {
     free(data);
     return -1;
 }
 
 free(data);
-if (head_update(&commit_id) != 0) {
+
+if (head_update(commit_id_out) != 0)
     return -1;
-}
 
 return 0;
+}
